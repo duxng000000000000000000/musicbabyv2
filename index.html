@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Trình Phát Nhạc TikTok Pixel Pink</title>
+
+  <!-- CẤU HÌNH PWA DÀNH CHO IOS SAFARI (Full Màn Hình Native) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nhạc TikTok">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/duxng000000000000000000/Musicbaby/main/IMG_20260928_224327_886.jpg">
+
+  <!-- FONT CHỮ PIXEL RETRO Y2K -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      image-rendering: pixelated;
+    }
+
+    body {
+      font-family: 'VT323', monospace;
+      background-color: #ffd1dc;
+      background-image: 
+        radial-gradient(#ffb6c1 2px, transparent 2px),
+        radial-gradient(#ffb6c1 2px, #ffd1dc 2px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      color: #8b263e;
+      margin: 0;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      font-size: 18px;
+    }
+
+    /* TIÊU ĐỀ Y2K */
+    .app-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      color: #ff3366;
+      text-shadow: 2px 2px 0px #fff, 4px 4px 0px #ff99bb;
+      margin: 10px 0 14px 0;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* KHUNG PIXEL TỔNG THỂ */
+    .pixel-box {
+      background: #fff0f5;
+      border: 4px solid #ff6699;
+      box-shadow: 
+        inset -4px -4px 0px #ffb6c1,
+        inset 4px 4px 0px #ffffff,
+        5px 5px 0px #8b263e;
+      border-radius: 12px;
+      padding: 14px;
+      width: 100%;
+      max-width: 380px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .pixel-header {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      background: #ff6699;
+      color: white;
+      padding: 6px 10px;
+      margin: -14px -14px 12px -14px;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* INPUT VÀ NÚT BẤM PIXEL */
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      border: 3px solid #ff99bb;
+      background: #fff;
+      color: #8b263e;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      outline: none;
+      box-shadow: inset 2px 2px 0px #ffd1dc;
+    }
+
+    .btn {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 9px;
+      padding: 10px;
+      width: 100%;
+      background: #ff6699;
+      color: #fff;
+      border: 3px solid #8b263e;
+      box-shadow: 0 4px 0 #8b263e;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.1s ease;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn:active {
+      box-shadow: 0 0 0 #8b263e;
+      transform: translateY(4px);
+    }
+
+    .btn-secondary {
+      background: #ffb6c1;
+      color: #8b263e;
+      font-size: 8px;
+      padding: 8px 4px;
+    }
+
+    .btn-active {
+      background: #ff0055 !important;
+      color: #fff !important;
+      border-color: #5a001a !important;
+    }
+
+    .btn-danger {
+      background: #ff4d4d;
+      color: white;
+      border: 2px solid #800000;
+      padding: 4px 6px;
+      font-size: 10px;
+      box-shadow: 0 2px 0 #800000;
+      border-radius: 6px;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    /* MÀN HÌNH PLAYER & ĐĨA NHẠC XOAY */
+    .player-screen {
+      background: #ffe6ee;
+      border: 3px dashed #ff80ab;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .album-art-box {
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 10px auto;
+      border: 3px solid #ff6699;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ffcdd2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 4px #ffe6ee, 0 0 0 7px #ff80ab;
+      animation: rotateDisc 10s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .album-art-box.playing {
+      animation-play-state: running;
+    }
+
+    .album-art-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes rotateDisc {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .song-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #d81b60;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .song-artist {
+      font-size: 18px;
+      color: #ff4081;
+    }
+
+    /* THANH TIẾN TRÌNH THỜI GIAN */
+    .progress-container {
+      margin: 8px 0;
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      color: #8b263e;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #ff3366;
+      cursor: pointer;
+    }
+
+    /* BỘ ĐIỀU KHIỂN NHẠC (CONTROLS) */
+    .control-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 10px;
+      gap: 6px;
+    }
+
+    .btn-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 12px;
+    }
+
+    .btn-main {
+      width: 52px;
+      height: 52px;
+      font-size: 14px;
+      background: #ff3366;
+    }
+
+    /* DANH SÁCH BÀI HÁT OFFLINE (PLAYLIST) */
+    .playlist {
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 6px;
+    }
+
+    .playlist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      background: #fff;
+      border: 2px solid #ffb6c1;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+
+    .playlist-item.active {
+      background: #ffe6ee;
+      border-color: #ff3366
